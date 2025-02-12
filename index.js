@@ -1,30 +1,31 @@
-var express = require('express')
-var socket = require('socket.io')
-//app setup
-var app = express();
-var server = app.listen(4000,function(){
-    console.log('listening to request on prt 4000');
+const express = require('express');
+const socket = require('socket.io');
+
+const app = express();
+
+// Usar el puerto que asigna Render o 4000 por defecto (para pruebas locales)
+const PORT = process.env.PORT || 4000;
+
+const server = app.listen(PORT, function () {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
-//static files
+// Archivos estáticos (asegúrate de que existe la carpeta "public")
 app.use(express.static('public'));
 
-//socket setup
-var io = socket(server);
+// Configuración de WebSockets
+const io = socket(server);
 
-io.on('connection',function(socket){
-    console.log('made socket connection',socket.id)
+io.on('connection', function (socket) {
+    console.log('Nueva conexión de socket:', socket.id);
 
-    socket.on('chat',function(data){
-        io.sockets.emit('chat',data); 
+    // Escuchar mensajes de chat
+    socket.on('chat', function (data) {
+        io.sockets.emit('chat', data);
+    });
 
-});
-
-
-
-// Handle typing event
-socket.on('typing', function(data){
-    socket.broadcast.emit('typing', data);
-  });
-
+    // Manejar desconexiones
+    socket.on('disconnect', () => {
+        console.log(`Usuario desconectado: ${socket.id}`);
+    });
 });
