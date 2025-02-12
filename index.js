@@ -19,9 +19,15 @@ const io = socket(server);
 io.on('connection', function (socket) {
     console.log('Nueva conexión de socket:', socket.id);
 
-    // Escuchar mensajes de chat
+    // Escuchar el evento 'chat' y emitirlo a todos los clientes conectados
     socket.on('chat', function (data) {
-        io.sockets.emit('chat', data);
+        console.log('Mensaje recibido:', data);  // Verificar que el mensaje se recibe
+        io.sockets.emit('chat', data);  // Emitir el mensaje a todos los clientes
+    });
+
+    // Escuchar el evento 'typing' y emitirlo a todos los clientes
+    socket.on('typing', function (data) {
+        socket.broadcast.emit('typing', data);  // Emitir a todos excepto el emisor
     });
 
     // Manejar desconexiones
