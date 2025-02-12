@@ -1,5 +1,5 @@
 // Establecer la conexión con el servidor usando la URL de Render
-var socket = io.connect(window.location.hostname);  // Cambiado para usar la URL del servidor
+var socket = io.connect('https://chatentiemporeal.onrender.com');  // Cambiado para usar la URL del servidor
 
 // Consultar el DOM
 var message = document.getElementById('message'),
