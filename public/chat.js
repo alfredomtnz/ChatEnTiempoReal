@@ -1,45 +1,34 @@
-// Establecer la conexión con el servidor usando la URL de Render
-var socket = io.connect('https://chatentiemporeal.onrender.com');  // Cambiado para usar la URL del servidor
+// Establecer la conexión con el servidor de producción
+var socket = io.connect('https://chatentiemporeal.onrender.com'); // Cambia esta URL
 
-// Consultar el DOM
+// Query DOM
 var message = document.getElementById('message'),
-    handle = document.getElementById('handle'),
-    btn = document.getElementById('send'),
-    output = document.getElementById('output'),
-    feedback = document.getElementById('feedback');
+      handle = document.getElementById('handle'),
+      btn = document.getElementById('send'),
+      output = document.getElementById('output'),
+      feedback = document.getElementById('feedback');
 
-// Emitir el evento 'chat' cuando el botón "Send" es presionado
+// Emitir evento
 btn.addEventListener('click', function() {
-    var msg = message.value.trim();  // Verificar que no esté vacío
-    var userHandle = handle.value.trim();  // Verificar que no esté vacío
-
-    if (msg !== "" && userHandle !== "") {
-        socket.emit('chat', {
-            message: msg,
-            handle: userHandle
-        });
-        message.value = "";  // Limpiar el campo de mensaje después de enviar
-    } else {
-        alert("Por favor, ingresa un mensaje y un nombre de usuario.");
-    }
+    socket.emit('chat', {
+        message: message.value,
+        handle: handle.value
+    });
+    message.value = "";
 });
 
-// Emitir 'typing' cuando el usuario está escribiendo
+// Evento de escritura
 message.addEventListener('keypress', function() {
-    var userHandle = handle.value.trim();
-    if (userHandle !== "") {
-        socket.emit('typing', userHandle);
-    }
+    socket.emit('typing', handle.value);
 });
 
-// Escuchar el evento 'chat' desde el servidor y agregarlo al DOM
+// Escuchar eventos
 socket.on('chat', function(data) {
-    console.log(data);  // Verificar si los datos llegan al cliente
     feedback.innerHTML = '';
     output.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
 });
 
-// Escuchar el evento 'typing' para mostrar quién está escribiendo
 socket.on('typing', function(data) {
-    feedback.innerHTML = '<p><em>' + data + ' está escribiendo...</em></p>';
+    feedback.innerHTML = '<p><em>' + data + ' esta escribiendo...</em></p>';
 });
+
